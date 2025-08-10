@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react";
+import type React from "react"
 import type { ReactElement } from "react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
