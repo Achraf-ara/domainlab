@@ -1,4 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,7 +10,6 @@ import InvestmentStrategies from "@/components/about/investment-strategies"
 export default function Page() {
   return (
     <main>
-      <SiteHeader />
 
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-gradient-to-br from-[#42cae5]/5 via-transparent to-[#01040b]/5">

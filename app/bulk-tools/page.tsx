@@ -1,4 +1,3 @@
-import { SiteHeader } from "@/components/site-header"
 import KeywordCombiner from "@/components/bulk/keyword-combiner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
@@ -6,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card"
 export default function Page() {
   return (
     <main>
-      <SiteHeader />
       <section className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold">Bulk Tools</h1>
         <p className="mt-1 text-sm text-muted-foreground">Combine keywords, bulk WHOIS, and batch valuation.</p>

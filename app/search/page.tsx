@@ -6,7 +6,6 @@ import DomainCard, { type DomainItem } from "@/components/domain-card"
 import ExportButtons from "@/components/export-buttons"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
-import { SiteHeader } from "@/components/site-header"
 import ESInstantSearch from "@/components/search/es-instant-search"
 
 export default function Page() {
@@ -67,7 +66,6 @@ export default function Page() {
 
   return (
     <main>
-      <SiteHeader />
       <section className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold">Search</h1>
         <p className="mt-1 text-sm text-muted-foreground">

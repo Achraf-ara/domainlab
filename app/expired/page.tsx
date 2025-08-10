@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { SiteHeader } from "@/components/site-header"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -55,7 +54,6 @@ export default function Page() {
 
   return (
     <main>
-      <SiteHeader />
       <section className="container mx-auto px-4 py-8">
         <div className="space-y-6">
           <div>

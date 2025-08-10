@@ -1,6 +1,5 @@
 "use client"
 
-import { SiteHeader } from "@/components/site-header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -237,7 +236,6 @@ export default function Page() {
 
   return (
     <main>
-      <SiteHeader />
 
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-gradient-to-br from-[#42cae5]/5 via-transparent to-[#01040b]/5">

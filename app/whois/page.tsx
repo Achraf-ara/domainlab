@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import { SiteHeader } from "@/components/site-header"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -43,7 +42,6 @@ export default function Page() {
 
   return (
     <main>
-      <SiteHeader />
       <section className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold">WHOIS Lookup</h1>
         <p className="mt-1 text-sm text-muted-foreground">Check registration details with caching to control costs.</p>

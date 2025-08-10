@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import TrendsChart from "@/components/trends/trends-chart"
-import { SiteHeader } from "@/components/site-header"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
@@ -11,7 +10,6 @@ export default function Page() {
   const [applied, setApplied] = useState("ai tools")
   return (
     <main>
-      <SiteHeader />
       <section className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold">Trends</h1>
         <p className="mt-1 text-sm text-muted-foreground">
