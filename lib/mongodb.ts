@@ -9,7 +9,7 @@ export async function getDb(): Promise<Db | null> {
   if (cachedDb) return cachedDb
   client = new MongoClient(uri)
   await client.connect()
-  const db = client.db(process.env.MONGODB_DB || "domainlab")
+  const db = client.db(process.env.MONGODB_DB || "namepurse")
   cachedDb = db
   return db
 }

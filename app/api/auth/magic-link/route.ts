@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   await sendMagicLinkEmail({
     to: email,
     link,
-    from: process.env.EMAIL_FROM || "DomainLab <no-reply@example.com>",
+    from: process.env.EMAIL_FROM || "NamePurse <no-reply@example.com>",
   })
 
   return NextResponse.json({ success: true })

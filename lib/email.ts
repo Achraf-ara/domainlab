@@ -27,7 +27,7 @@ export async function sendMail({
   })
 
   await transporter.sendMail({
-    from: from || process.env.EMAIL_FROM || `DomainLab <${user}>`,
+    from: from || process.env.EMAIL_FROM || `NamePurse <${user}>`,
     to,
     subject,
     text,
@@ -39,10 +39,10 @@ export async function sendMail({
 }
 
 export async function sendMagicLinkEmail({ to, link }: { to: string; link: string }) {
-  const subject = "Your domainLab login link"
+  const subject = "Your NamePurse login link"
   const html = `
     <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto; color: #111">
-      <h2 style="margin: 0 0 8px 0;">Sign in to domainLab</h2>
+      <h2 style="margin: 0 0 8px 0;">Sign in to NamePurse</h2>
       <p style="margin: 0 0 16px 0;">Click the secure link below to finish signing in:</p>
       <p style="margin: 0 0 16px 0;">
         <a href="${link}" style="background:#42cae5; color:#000; text-decoration:none; padding:10px 14px; border-radius:8px; display:inline-block">Sign in</a>

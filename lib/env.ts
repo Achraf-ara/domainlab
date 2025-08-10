@@ -1,6 +1,6 @@
 export const ENV = {
   MONGODB_URI: process.env.MONGODB_URI || "",
-  MONGODB_DB: process.env.MONGODB_DB || "domainlab",
+  MONGODB_DB: process.env.MONGODB_DB || "namepurse",
   JWT_SECRET: process.env.JWT_SECRET || "",
   // AI
   GROQ_API_KEY: process.env.GROQ_API_KEY || "",

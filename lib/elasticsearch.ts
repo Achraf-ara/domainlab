@@ -15,7 +15,7 @@ export type DomainIndexRecord = {
 
 export function getESConfig() {
   const node = process.env.ELASTICSEARCH_NODE
-  const index = process.env.ELASTICSEARCH_INDEX || "domainlab"
+  const index = process.env.ELASTICSEARCH_INDEX || "namepurse"
   if (!node) {
     throw new Error("ELASTICSEARCH_NODE missing")
   }
