@@ -10,24 +10,42 @@ export type WhoisSnapshot = {
 }
 
 export async function whoisLookup(domain: string): Promise<WhoisSnapshot> {
-  if (!ENV.WHOIS_API_KEY) {
-    throw new Error("WHOIS_API_KEY missing. Add it in Vercel env to enable real WHOIS.")
+  if (!ENV.IP2WHOIS_API_KEY) {
+    throw new Error("IP2WHOIS_API_KEY missing. Add it in Vercel env to enable real WHOIS.")
   }
-  // WhoisXML API
-  const url = `${ENV.WHOIS_API_URL}?apiKey=${encodeURIComponent(
-    ENV.WHOIS_API_KEY,
-  )}&domainName=${encodeURIComponent(domain)}&outputFormat=JSON`
+  // IP2WHOIS API
+  const url = `${ENV.IP2WHOIS_API_URL}?key=${encodeURIComponent(
+    ENV.IP2WHOIS_API_KEY,
+  )}&domain=${encodeURIComponent(domain)}`
   const res = await fetch(url, { headers: { Accept: "application/json" }, cache: "no-store" })
-  if (!res.ok) throw new Error(`WHOIS provider error: ${res.status}`)
+  if (!res.ok) throw new Error(`IP2WHOIS provider error: ${res.status} - ${await res.text()}`)
   const data = await res.json()
-  const rec = data?.WhoisRecord
-  const registered = !!rec?.dataError || !!rec?.registryData || !!rec?.createdDate || !!rec?.registrarName
+
+  // IP2WHOIS response structure:
+  // {
+  //   "domain": "example.com",
+  //   "domain_id": "...",
+  //   "status": "registered", // or "available"
+  //   "create_date": "YYYY-MM-DD HH:MM:SS",
+  //   "update_date": "YYYY-MM-DD HH:MM:SS",
+  //   "expire_date": "YYYY-MM-DD HH:MM:SS",
+  //   "domain_age": "...",
+  //   "whois_server": "...",
+  //   "registrar": { "iana_id": "...", "name": "...", "url": "..." },
+  //   "registrant": { ... },
+  //   "admin": { ... },
+  //   "tech": { ... },
+  //   "nameservers": [ ... ],
+  //   "whois_raw": "..."
+  // }
+
+  const registered = data.status === "registered"
   return {
     registered,
-    registrar: rec?.registrarName || rec?.registrarIanaId,
-    creationDate: rec?.createdDateNormalized || rec?.createdDate,
-    expiryDate: rec?.expiresDateNormalized || rec?.expiresDate,
-    rawWhois: rec?.rawText,
-    source: "whoisxml",
+    registrar: data.registrar?.name || undefined,
+    creationDate: data.create_date || undefined,
+    expiryDate: data.expire_date || undefined,
+    rawWhois: data.whois_raw || undefined,
+    source: "ip2whois",
   }
 }
