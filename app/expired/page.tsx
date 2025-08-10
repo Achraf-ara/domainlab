@@ -5,7 +5,9 @@ import { SiteHeader } from "@/components/site-header"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import ExportButtons from "@/components/export-buttons"
+import { AlertCircle, Database } from "lucide-react"
 
 type Expired = {
   domain: string
@@ -17,17 +19,33 @@ type Expired = {
   tags: string[]
 }
 
+type ApiResponse = {
+  results: Expired[]
+  source: string
+  note?: string
+}
+
 export default function Page() {
   const [q, setQ] = useState("")
   const [items, setItems] = useState<Expired[]>([])
   const [loading, setLoading] = useState(false)
+  const [source, setSource] = useState<string>("")
+  const [note, setNote] = useState<string>("")
 
   async function load() {
     setLoading(true)
-    const res = await fetch(`/api/expired?query=${encodeURIComponent(q)}`)
-    const json = await res.json()
-    setItems(json.results || [])
-    setLoading(false)
+    try {
+      const res = await fetch(`/api/expired?query=${encodeURIComponent(q)}`)
+      const json: ApiResponse = await res.json()
+      setItems(json.results || [])
+      setSource(json.source || "")
+      setNote(json.note || "")
+    } catch (error) {
+      console.error("Failed to load expired domains:", error)
+      setItems([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -39,41 +57,90 @@ export default function Page() {
     <main>
       <SiteHeader />
       <section className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold">Expired Domains</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Filter by drop date, metrics, and trends.</p>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold">Expired Domains</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Discover recently expired domains with existing traffic, backlinks, and SEO value.
+            </p>
+          </div>
 
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Input placeholder="Keyword (optional)" value={q} onChange={(e) => setQ(e.target.value)} />
-          <Button onClick={load} className="bg-[#01040b] text-white hover:bg-black" disabled={loading}>
-            {loading ? "Loading…" : "Search"}
-          </Button>
-        </div>
-
-        <div className="mt-4 flex items-center justify-end">
-          <ExportButtons data={items} filenameBase="domainlab-expired" />
-        </div>
-
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {items.map((x) => (
-            <Card key={x.domain}>
-              <CardContent className="grid gap-2 p-4 text-sm">
-                <div className="flex items-center justify-between">
-                  <div className="text-base font-semibold">{x.domain}</div>
-                  <div className="rounded bg-[#42cae5]/20 px-2 py-1 text-xs">Drops: {x.dropDate}</div>
-                </div>
-                <div className="grid grid-cols-5 gap-2">
-                  <Metric label="Traffic" value={x.traffic.toLocaleString()} />
-                  <Metric label="Backlinks" value={x.backlinks.toLocaleString()} />
-                  <Metric label="Age" value={`${x.age}y`} />
-                  <Metric label="Price guide" value={`$${x.priceGuide.toLocaleString()}`} />
-                  <Metric label="Tags" value={x.tags.join(", ")} />
+          {/* Data Source Notice */}
+          {source === "mock" && note && (
+            <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
+              <CardContent className="flex items-start gap-3 p-4">
+                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-200">Sample Data</p>
+                  <p className="text-sm text-amber-700 dark:text-amber-300">{note}</p>
                 </div>
               </CardContent>
             </Card>
-          ))}
-          {!loading && items.length === 0 && (
-            <div className="text-sm text-muted-foreground">No expired domains matched. Try a broader search.</div>
           )}
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Input
+                placeholder="Search by keyword or domain..."
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                className="sm:w-80"
+              />
+              <Button onClick={load} className="bg-[#01040b] text-white hover:bg-black" disabled={loading}>
+                {loading ? "Loading…" : "Search"}
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {source && (
+                <Badge variant="outline" className="gap-2">
+                  <Database className="h-3 w-3" />
+                  {source === "mock" ? "Sample Data" : "Live Data"}
+                </Badge>
+              )}
+              <ExportButtons data={items} filenameBase="namepulse-expired" />
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {items.map((x) => (
+              <Card key={x.domain} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4 space-y-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="font-semibold text-lg">{x.domain}</div>
+                      <Badge variant="secondary" className="mt-1 text-xs">
+                        Drops: {x.dropDate}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <Metric label="Traffic" value={x.traffic.toLocaleString()} />
+                    <Metric label="Backlinks" value={x.backlinks.toLocaleString()} />
+                    <Metric label="Age" value={`${x.age} years`} />
+                    <Metric label="Est. Value" value={`$${x.priceGuide.toLocaleString()}`} />
+                  </div>
+
+                  <div className="flex flex-wrap gap-1">
+                    {x.tags.map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-xs capitalize">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
+            {!loading && items.length === 0 && (
+              <div className="col-span-full text-center py-12 text-muted-foreground">
+                <Database className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">No expired domains found</p>
+                <p className="text-sm mt-1">Try a different search term or check back later for new drops.</p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
     </main>
@@ -82,9 +149,9 @@ export default function Page() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded border p-2 text-center">
-      <div className="text-[11px] text-muted-foreground">{label}</div>
-      <div className="text-sm font-medium">{value}</div>
+    <div className="text-center p-3 rounded-lg bg-muted/30">
+      <div className="text-xs text-muted-foreground font-medium">{label}</div>
+      <div className="text-sm font-semibold mt-1">{value}</div>
     </div>
   )
 }
