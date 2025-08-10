@@ -8,13 +8,17 @@ export type AvailabilityResult = {
 }
 
 export async function domainrStatus(domains: string[]): Promise<AvailabilityResult[]> {
-  if (!ENV.DOMAINR_CLIENT_ID) throw new Error("DOMAINR_CLIENT_ID missing")
-  // Domainr Status API
-  const url = `https://api.domainr.com/v2/status?domain=${encodeURIComponent(
-    domains.join(","),
-  )}&client_id=${encodeURIComponent(ENV.DOMAINR_CLIENT_ID)}`
-  const res = await fetch(url, { cache: "no-store" })
-  if (!res.ok) throw new Error(`Domainr error: ${res.status}`)
+  if (!ENV.DOMAINR_CLIENT_ID) throw new Error("DOMAINR_CLIENT_ID missing. Add your RapidAPI Application Key.")
+  // Domainr Status API via RapidAPI
+  const url = `https://domainr.p.rapidapi.com/v2/status?domain=${encodeURIComponent(domains.join(","))}`
+  const res = await fetch(url, {
+    headers: {
+      "X-RapidAPI-Key": ENV.DOMAINR_CLIENT_ID, // Use the RapidAPI Application Key here
+      "X-RapidAPI-Host": "domainr.p.rapidapi.com", // Required for RapidAPI
+    },
+    cache: "no-store",
+  })
+  if (!res.ok) throw new Error(`Domainr error: ${res.status} - ${await res.text()}`)
   const json = await res.json()
   const statuses = (json?.status || []) as Array<{ domain: string; status: string }>
   return statuses.map((s) => ({
