@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react";
+import type React from "react"
 import type { ReactElement } from "react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -29,7 +29,12 @@ export default function HeroSection(): ReactElement {
     <section className="relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#42cae5]/5 via-transparent to-[#01040b]/5" />
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fillRule=\"evenodd\"%3E%3Cg fill=\"%2342cae5\" fillOpacity=\"0.03\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"2\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
+      <div className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fillRule=\"evenodd\"%3E%3Cg fill=\"%2342cae5\" fillOpacity=\"0.03\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"2\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
+        }}
+      />
       
       <div className="relative container mx-auto px-4 py-16 lg:py-24">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">

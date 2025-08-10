@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
@@ -10,7 +9,12 @@ export default function CTASection() {
       <div className="container mx-auto px-4 lg:px-6">
         <Card className="relative overflow-hidden border-[#42cae5]/20">
           <div className="absolute inset-0 bg-gradient-to-r from-[#42cae5]/10 via-transparent to-[#01040b]/10" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fillRule=\"evenodd\"%3E%3Cg fill=\"%2342cae5\" fillOpacity=\"0.05\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"1\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]" />
+          <div className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fillRule=\"evenodd\"%3E%3Cg fill=\"%2342cae5\" fillOpacity=\"0.05\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"1\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
+            }}
+          />
           
           <CardContent className="relative p-8 lg:p-16 text-center space-y-8">
             <div className="space-y-4">
