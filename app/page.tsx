@@ -1,86 +1,113 @@
 import { SiteHeader } from "@/components/site-header"
-import HeroQuickSearch from "@/components/hero-quick-search"
-import { Card, CardContent } from "@/components/ui/card"
+import HeroSection from "@/components/hero-section"
+import FeaturesSection from "@/components/features-section"
+import StatsSection from "@/components/stats-section"
+import CTASection from "@/components/cta-section"
 import Link from "next/link"
-import { Gauge, Globe, LineChart, Sparkles } from "lucide-react"
 
 export default function Page() {
   return (
-    <main>
+    <main className="min-h-screen">
       <SiteHeader />
-      <section className="container mx-auto px-4 py-8 md:py-12">
-        <HeroQuickSearch />
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          <Card className="border-[#42cae5]/30">
-            <CardContent className="grid gap-2 p-4">
-              <div className="flex items-center gap-2 text-[#01040b] dark:text-white">
-                <Sparkles className="h-5 w-5 text-[#42cae5]" />
-                <div className="font-semibold">AI Valuation</div>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Market-based ranges with confidence and narrative, powered by Groq (fallback available).
-              </p>
-              <Link href="/valuation" className="text-sm text-[#42cae5] underline underline-offset-4">
-                Value a domain →
-              </Link>
-            </CardContent>
-          </Card>
-          <Card className="border-[#42cae5]/30">
-            <CardContent className="grid gap-2 p-4">
-              <div className="flex items-center gap-2 text-[#01040b] dark:text-white">
-                <Globe className="h-5 w-5 text-[#42cae5]" />
-                <div className="font-semibold">WHOIS & Availability</div>
-              </div>
-              <p className="text-sm text-muted-foreground">Check ownership info and live availability across TLDs.</p>
-              <Link href="/whois" className="text-sm text-[#42cae5] underline underline-offset-4">
-                Run WHOIS →
-              </Link>
-            </CardContent>
-          </Card>
-          <Card className="border-[#42cae5]/30">
-            <CardContent className="grid gap-2 p-4">
-              <div className="flex items-center gap-2 text-[#01040b] dark:text-white">
-                <LineChart className="h-5 w-5 text-[#42cae5]" />
-                <div className="font-semibold">Trends & Expired</div>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Discover rising keywords and high-potential expired domains.
-              </p>
-              <div className="flex items-center gap-4">
-                <Link href="/trends" className="text-sm text-[#42cae5] underline underline-offset-4">
-                  Explore trends →
-                </Link>
-                <Link href="/expired" className="text-sm text-[#42cae5] underline underline-offset-4">
-                  Find expired →
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <HeroSection />
+      <FeaturesSection />
+      <StatsSection />
+      <CTASection />
 
-        <div className="mt-12 rounded-xl border p-6">
-          <div className="flex items-center gap-2">
-            <Gauge className="h-5 w-5 text-[#42cae5]" />
-            <h2 className="text-xl font-semibold">Get started in minutes</h2>
+      <footer className="border-t bg-muted/20">
+        <div className="container mx-auto px-4 lg:px-6 py-12">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#42cae5] to-[#01040b]" />
+                <span className="text-lg font-bold">
+                  <span className="bg-gradient-to-r from-[#42cae5] to-[#01040b] bg-clip-text text-transparent">
+                    Name
+                  </span>
+                  <span>Pulse</span>
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground max-w-xs">
+                The complete domain intelligence platform for investors, entrepreneurs, and agencies.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-semibold">Tools</h4>
+              <div className="space-y-2 text-sm">
+                <Link href="/search" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  Domain Search
+                </Link>
+                <Link href="/valuation" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  AI Valuation
+                </Link>
+                <Link href="/whois" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  WHOIS Lookup
+                </Link>
+                <Link href="/trends" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  Trend Analysis
+                </Link>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-semibold">Resources</h4>
+              <div className="space-y-2 text-sm">
+                <Link href="/about" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  About
+                </Link>
+                <Link href="/faq" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  FAQ
+                </Link>
+                <Link
+                  href="/bulk-tools"
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Bulk Tools
+                </Link>
+                <Link href="/expired" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  Expired Domains
+                </Link>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-semibold">Account</h4>
+              <div className="space-y-2 text-sm">
+                <Link
+                  href="/auth/login"
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="block text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Create Account
+                </Link>
+                <Link href="/account" className="block text-muted-foreground hover:text-foreground transition-colors">
+                  Dashboard
+                </Link>
+              </div>
+            </div>
           </div>
-          <ol className="mt-4 list-inside list-decimal text-sm text-muted-foreground">
-            <li>Use Quick Search to generate available ideas.</li>
-            <li>Run Valuation to gauge market range and confidence.</li>
-            <li>Track keyword Trends and scout Expired for hidden gems.</li>
-            <li>Save promising picks to your Account (anonymous mode works too).</li>
-          </ol>
-        </div>
-      </section>
-      <footer className="mt-16 border-t">
-        <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-8 text-sm text-muted-foreground md:flex-row">
-          <div>© {new Date().getFullYear()} domainLab</div>
-          <div className="flex gap-4">
-            <Link href="/about" className="hover:underline">
-              About
-            </Link>
-            <Link href="/faq" className="hover:underline">
-              FAQ
-            </Link>
+
+          <div className="mt-12 pt-8 border-t border-muted/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} NamePulse. All rights reserved.
+            </p>
+            <div className="flex gap-6 text-sm">
+              <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
+                Privacy
+              </Link>
+              <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
+                Terms
+              </Link>
+              <Link href="/api/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+                Contact
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

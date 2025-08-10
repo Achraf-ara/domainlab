@@ -3,6 +3,7 @@ import { DEFAULT_TLDS } from "@/lib/constants"
 import { domainrStatus, godaddyPriceQuote } from "@/lib/providers/availability"
 import { ENV } from "@/lib/env"
 import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
+import { CACHE_HEADERS } from "@/lib/cache-headers"
 
 export async function GET(req: Request) {
   const ip = ipFromRequest(req)
@@ -42,43 +43,48 @@ export async function GET(req: Request) {
     )
   }
 
-  // Check availability via Domainr
-  const statuses = await domainrStatus(candidates)
+  try {
+    // Check availability via Domainr
+    const statuses = await domainrStatus(candidates)
 
-  // Enrich with optional price from GoDaddy and simple mock metrics (traffic/backlinks/age) until you wire SEO providers.
-  const results = await Promise.all(
-    statuses.map(async (s) => {
-      const price = await godaddyPriceQuote(s.domain) // optional
-      const sld = s.domain.split(".")[0] || ""
-      const tld = "." + s.domain.split(".").slice(1).join(".")
-      const age = Math.max(0, Math.min(20, Math.floor(sld.length * 1.1)))
-      const traffic = Math.floor(((sld.charCodeAt(0) || 50) % 90) * 300)
-      const backlinks = Math.floor(((sld.charCodeAt(sld.length - 1) || 60) % 80) * 400)
-      const tagList = [sld.length <= 8 ? "brandable" : "keyword"]
-      return {
-        domain: s.domain,
-        tld,
-        available: s.available,
-        price: price ?? Math.max(9, 12 + (sld.length % 10) * 3),
-        traffic,
-        backlinks,
-        age,
-        tags: tagList,
-      }
-    }),
-  )
+    // Enrich with optional price from GoDaddy and simple mock metrics
+    const results = await Promise.all(
+      statuses.map(async (s) => {
+        const price = await godaddyPriceQuote(s.domain).catch(() => null)
+        const sld = s.domain.split(".")[0] || ""
+        const tld = "." + s.domain.split(".").slice(1).join(".")
+        const age = Math.max(0, Math.min(20, Math.floor(sld.length * 1.1)))
+        const traffic = Math.floor(((sld.charCodeAt(0) || 50) % 90) * 300)
+        const backlinks = Math.floor(((sld.charCodeAt(sld.length - 1) || 60) % 80) * 400)
+        const tagList = [sld.length <= 8 ? "brandable" : "keyword"]
+        return {
+          domain: s.domain,
+          tld,
+          available: s.available,
+          price: price ?? Math.max(9, 12 + (sld.length % 10) * 3),
+          traffic,
+          backlinks,
+          age,
+          tags: tagList,
+        }
+      }),
+    )
 
-  const filtered = results.filter(
-    (r) =>
-      r.domain.length - r.tld.length >= lengthMin &&
-      r.domain.length - r.tld.length <= lengthMax &&
-      r.price >= priceMin &&
-      r.price <= priceMax &&
-      r.traffic >= trafficMin &&
-      r.backlinks >= backlinksMin &&
-      r.age >= ageMin &&
-      (tags.length === 0 || tags.some((t) => (r.tags || []).includes(t))),
-  )
+    const filtered = results.filter(
+      (r) =>
+        r.domain.length - r.tld.length >= lengthMin &&
+        r.domain.length - r.tld.length <= lengthMax &&
+        r.price >= priceMin &&
+        r.price <= priceMax &&
+        r.traffic >= trafficMin &&
+        r.backlinks >= backlinksMin &&
+        r.age >= ageMin &&
+        (tags.length === 0 || tags.some((t) => (r.tags || []).includes(t))),
+    )
 
-  return NextResponse.json({ results: filtered, source: "domainr+godaddy" })
+    return NextResponse.json({ results: filtered, source: "domainr+godaddy" }, { headers: CACHE_HEADERS.api })
+  } catch (error) {
+    console.error("Search error:", error)
+    return NextResponse.json({ error: "Search temporarily unavailable" }, { status: 503 })
+  }
 }

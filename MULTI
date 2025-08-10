@@ -1,0 +1,101 @@
+// components/site-header.tsx
+import React from 'react';
+
+const Brand = () => {
+  return (
+    <span className="text-lg font-bold tracking-tight">
+      <span className="bg-gradient-to-r from-[#42cae5] to-[#01040b] bg-clip-text text-transparent">name</span>
+      <span className="text-foreground">Pulse</span>
+    </span>
+  );
+};
+
+export default Brand;
+
+// app/page.tsx
+import React from 'react';
+import Brand from '../components/site-header';
+
+const HomePage = () => {
+  return (
+    <div>
+      <header>
+        <Brand />
+      </header>
+      <main>
+        {/* Main content here */}
+      </main>
+      <footer>
+        <div>© {new Date().getFullYear()} NamePulse</div>
+      </footer>
+    </div>
+  );
+};
+
+export default HomePage;
+
+// app/about/page.tsx
+import React from 'react';
+
+const AboutPage = () => {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold">About NamePulse</h1>
+      <p>
+        NamePulse helps investors and founders discover, evaluate, and track domains. Learn how to buy, hold, and sell.
+      </p>
+      {/* Additional content here */}
+    </div>
+  );
+};
+
+export default AboutPage;
+
+// lib/email.ts
+import nodemailer from 'nodemailer';
+
+const sendMail = async ({ to, subject, html, from }) => {
+  const transporter = nodemailer.createTransport({
+    // Transport configuration here
+  });
+
+  const mailOptions = {
+    from: from || process.env.EMAIL_FROM || `NamePulse <${user}>`,
+    to,
+    subject,
+    html,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+const sendMagicLinkEmail = async ({ user, token }) => {
+  const subject = "Your NamePulse login link";
+  const html = `
+    <h2 style="margin: 0 0 8px 0;">Sign in to NamePulse</h2>
+    <p>Click the link below to sign in:</p>
+    <a href="${process.env.APP_URL}/auth/login?token=${token}">Login</a>
+  `;
+
+  await sendMail({ to: user.email, subject, html });
+};
+
+export { sendMail, sendMagicLinkEmail };
+
+// app/api/contact/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  const { email, message } = body;
+
+  const html = `
+    <h2 style="color: #444;">New Contact Message via ${process.env.APP_URL || "NamePulse"}</h2>
+    <p>Email: ${email}</p>
+    <p>Message: ${message}</p>
+  `;
+
+  // Email sending logic here
+
+  return NextResponse.json({ message: 'Email sent successfully' });
+}
