@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import type { ReactElement } from "react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -11,7 +12,7 @@ import { Sparkles, TrendingUp, Shield, Zap, Search } from "lucide-react"
 
 const defaultTlds = [".com", ".net", ".org", ".io", ".ai", ".dev"]
 
-export default function HeroSection() {
+export default function HeroSection(): ReactElement {
   const router = useRouter()
   const [q, setQ] = useState("")
   const [tld, setTld] = useState(".com")
