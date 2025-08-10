@@ -1,22 +1,25 @@
 import { ENV } from "@/lib/env"
 
-// NameBio note: you must provide your licensed endpoint details in NAMEBIO_API_URL or set a proxy route.
-// The following function expects a POST/GET to your licensed endpoint and normalizes results.
+// Fetch domain comps/valuation from EstiBot API.
+// Returns the count of comps if available, else 0.
 export async function fetchComps(domainOrKeyword: string): Promise<number> {
-  if (ENV.NAMEBIO_KEY && ENV.NAMEBIO_API_URL) {
-    const res = await fetch(`${ENV.NAMEBIO_API_URL}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${ENV.NAMEBIO_KEY}`,
-      },
-      body: JSON.stringify({ query: domainOrKeyword, limit: 50 }),
-    })
-    if (!res.ok) throw new Error(`NameBio error: ${res.status}`)
-    const data = await res.json()
-    const count = Array.isArray(data?.sales) ? data.sales.length : Number(data?.count || 0)
-    return count
+  if (!ENV.ESTIBOT_API_KEY) {
+    // No EstiBot API key — return 0 to allow fallback valuation
+    return 0
   }
-  // If you don't have NameBio, we cannot query comps; return 0 and let valuation proceed.
-  throw new Error("NAMEBIO credentials missing")
+  const url = `https://api.estibot.com/v4/domain/estimate?domain=${encodeURIComponent(domainOrKeyword)}&key=${ENV.ESTIBOT_API_KEY}`
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  })
+  if (!res.ok) {
+    throw new Error(`EstiBot API error: ${res.status} ${res.statusText}`)
+  }
+  const data = await res.json()
+  // EstiBot returns comps count under data.sales or data.comps or similar — adjust if needed
+  // Here assuming 'data.sales' is an array of comps
+  const count = Array.isArray(data.sales) ? data.sales.length : 0
+  return count
 }
