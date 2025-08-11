@@ -6,3 +6,7 @@ export const THEME = {
 }
 
 export const SAMPLE_TAGS = ["brandable", "keyword", "geo", "trend"]
+
+export const CACHE_HEADERS = {
+  "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=60",
+}

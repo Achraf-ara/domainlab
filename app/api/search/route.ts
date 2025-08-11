@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server"
 import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
 import { domainrStatus, godaddyPriceQuote } from "@/lib/providers/availability"
-import { DEFAULT_TLDS } from "@/lib/constants"
+import { CACHE_HEADERS, DEFAULT_TLDS } from "@/lib/constants"
 import { ENV } from "@/lib/env"
-import { CACHE_HEADERS } from "@/lib/cache-headers"
 
 export async function GET(req: Request) {
   try {
