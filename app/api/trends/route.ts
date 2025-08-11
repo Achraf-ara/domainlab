@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server"
-import { ipFromRequest } from "@/lib/ip"
-import { rateLimit } from "@/lib/rate-limit"
-import { fetchTrendSeries } from "@/lib/google-trends"
+import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
+import { fetchTrendSeries } from "@/lib/providers/trends"
 import { generateMockTrends } from "@/lib/mock-trends"
-import { CACHE_HEADERS } from "@/constants/cache-headers"
+import { CACHE_HEADERS } from "@/lib/cache-headers"
 
 export async function GET(req: Request) {
   try {

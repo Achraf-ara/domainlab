@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server"
-import { ipFromRequest } from "@/lib/ip"
-import { rateLimit } from "@/lib/rate-limit"
-import { domainrStatus } from "@/lib/domainr"
-import { godaddyPriceQuote } from "@/lib/godaddy"
+import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
+import { domainrStatus, godaddyPriceQuote } from "@/lib/providers/availability"
 import { CACHE_HEADERS, DEFAULT_TLDS, ENV } from "@/lib/constants"
 
 export async function GET(req: Request) {

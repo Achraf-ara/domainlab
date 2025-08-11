@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
-import { ipFromRequest, rateLimit } from "@/lib/utils"
-import { fetchExpired } from "@/lib/data"
-import { mockExpiredDomains } from "@/lib/mockData"
-import { CACHE_HEADERS } from "@/lib/cacheHeaders"
+import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
+import { fetchExpired } from "@/lib/providers/expired"
+import { mockExpiredDomains } from "@/lib/mock-data"
+import { CACHE_HEADERS } from "@/lib/cache-headers"
 
 export async function GET(req: Request) {
   try {

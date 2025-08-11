@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server"
-import { ipFromRequest } from "@/utils/ipFromRequest"
-import { rateLimit } from "@/utils/rateLimit"
-import { getDb } from "@/utils/db"
-import { whoisLookup } from "@/utils/whoisLookup"
+import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
+import { getDb } from "@/lib/mongodb"
+import { whoisLookup } from "@/lib/providers/whois"
 
 export async function GET(req: Request) {
   try {

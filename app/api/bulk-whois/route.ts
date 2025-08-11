@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
-import { ipFromRequest } from "@/utils/ipFromRequest"
-import { rateLimit } from "@/utils/rateLimit"
-import { whoisLookup } from "@/utils/whoisLookup"
+import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
+import { whoisLookup } from "@/lib/providers/whois"
 
 export async function POST(req: Request) {
   try {

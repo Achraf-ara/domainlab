@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
-import { ipFromRequest, rateLimit } from "@/utils/rateLimit"
-import { parseDomainParts } from "@/utils/domainParser"
-import { fetchComps } from "@/utils/fetchComps"
+import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
+import { parseDomainParts } from "@/lib/domain-parser"
+import { fetchComps } from "@/lib/providers/comps"
 import {
   scoreAge,
   scoreLength,
@@ -10,11 +10,12 @@ import {
   scoreComps,
   priceFromScore,
   tldMultiplier,
-} from "@/utils/scoring"
-import { generateText } from "@/utils/generateText"
-import { getDb } from "@/utils/db"
-import { getSession } from "@/utils/session"
-import ENV from "@/utils/env"
+} from "@/lib/scoring"
+import { generateText } from "ai" // Corrected import for generateText
+import { groq } from "@ai-sdk/groq" // Added import for groq
+import { getDb } from "@/lib/mongodb"
+import { getSession } from "@/lib/auth"
+import { ENV } from "@/lib/env" // Corrected import for ENV
 
 export async function POST(req: Request) {
   try {
