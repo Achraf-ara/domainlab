@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { ipFromRequest, rateLimit } from "@/utils/rate-limit"
+import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
 
 export async function POST(req: Request) {
   try {
