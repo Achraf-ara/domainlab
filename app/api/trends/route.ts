@@ -19,8 +19,8 @@ export async function GET(req: Request) {
         return NextResponse.json({ keyword, series, source: "google-trends" }, { headers: CACHE_HEADERS.api })
       }
       throw new Error("No data returned from Google Trends API")
-    } catch (error) {
-      console.error("Google Trends API error or no data, falling back to mock:", error)
+    } catch (error: any) {
+      console.error("Google Trends API error or no data, falling back to mock:", error.message, error.stack)
       const series = generateMockTrends(keyword)
       return NextResponse.json(
         {
@@ -33,7 +33,7 @@ export async function GET(req: Request) {
       )
     }
   } catch (error: any) {
-    console.error("Unhandled error in /api/trends:", error)
+    console.error("Unhandled error in /api/trends:", error.message, error.stack)
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 })
   }
 }
