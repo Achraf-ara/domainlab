@@ -1,53 +1,50 @@
 import { NextResponse } from "next/server"
-import { DEFAULT_TLDS } from "@/lib/constants"
-import { domainrStatus, godaddyPriceQuote } from "@/lib/providers/availability"
-import { ENV } from "@/lib/env"
-import { ipFromRequest, rateLimit } from "@/lib/rate-limit"
-import { CACHE_HEADERS } from "@/lib/cache-headers"
+import { ipFromRequest } from "@/lib/ip"
+import { rateLimit } from "@/lib/rate-limit"
+import { domainrStatus } from "@/lib/domainr"
+import { godaddyPriceQuote } from "@/lib/godaddy"
+import { CACHE_HEADERS, DEFAULT_TLDS, ENV } from "@/lib/constants"
 
 export async function GET(req: Request) {
-  const ip = ipFromRequest(req)
-  const rl = await rateLimit(ip, "search")
-  if (!rl.allowed) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
-
-  const { searchParams } = new URL(req.url)
-  const query = (searchParams.get("query") || "").toLowerCase()
-  const lengthMin = Number(searchParams.get("lengthMin") || 3)
-  const lengthMax = Number(searchParams.get("lengthMax") || 16)
-  const priceMin = Number(searchParams.get("priceMin") || 0)
-  const priceMax = Number(searchParams.get("priceMax") || 100000)
-  const trafficMin = Number(searchParams.get("trafficMin") || 0)
-  const backlinksMin = Number(searchParams.get("backlinksMin") || 0)
-  const ageMin = Number(searchParams.get("ageMin") || 0)
-  const tlds = (searchParams.get("tlds") || DEFAULT_TLDS.join(","))
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)
-  const tags = (searchParams.get("tags") || "").split(",").filter(Boolean)
-
-  // Build candidate domains from query + common suffixes
-  const baseWords = query ? [query, `${query}ly`, `${query}hub`, `${query}verse`, `${query}grid`, `${query}labs`] : []
-  const candidates: string[] = []
-  for (const w of baseWords) for (const t of tlds) candidates.push(`${w}${t}`)
-  if (candidates.length === 0) {
-    return NextResponse.json(
-      { error: "Provide a query to generate candidates", hint: "Set ?query=keyword&tlds=.com,.io" },
-      { status: 400 },
-    )
-  }
-
-  if (!ENV.DOMAINR_CLIENT_ID) {
-    return NextResponse.json(
-      { error: "DOMAINR_CLIENT_ID missing. Add env var to enable availability checks." },
-      { status: 501 },
-    )
-  }
-
   try {
-    // Check availability via Domainr
+    const ip = ipFromRequest(req)
+    const rl = await rateLimit(ip, "search")
+    if (!rl.allowed) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 })
+
+    const { searchParams } = new URL(req.url)
+    const query = (searchParams.get("query") || "").toLowerCase()
+    const lengthMin = Number(searchParams.get("lengthMin") || 3)
+    const lengthMax = Number(searchParams.get("lengthMax") || 16)
+    const priceMin = Number(searchParams.get("priceMin") || 0)
+    const priceMax = Number(searchParams.get("priceMax") || 100000)
+    const trafficMin = Number(searchParams.get("trafficMin") || 0)
+    const backlinksMin = Number(searchParams.get("backlinksMin") || 0)
+    const ageMin = Number(searchParams.get("ageMin") || 0)
+    const tlds = (searchParams.get("tlds") || DEFAULT_TLDS.join(","))
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+    const tags = (searchParams.get("tags") || "").split(",").filter(Boolean)
+
+    const baseWords = query ? [query, `${query}ly`, `${query}hub`, `${query}verse`, `${query}grid`, `${query}labs`] : []
+    const candidates: string[] = []
+    for (const w of baseWords) for (const t of tlds) candidates.push(`${w}${t}`)
+    if (candidates.length === 0) {
+      return NextResponse.json(
+        { error: "Provide a query to generate candidates", hint: "Set ?query=keyword&tlds=.com,.io" },
+        { status: 400 },
+      )
+    }
+
+    if (!ENV.DOMAINR_CLIENT_ID) {
+      return NextResponse.json(
+        { error: "DOMAINR_CLIENT_ID missing. Add env var to enable availability checks." },
+        { status: 501 },
+      )
+    }
+
     const statuses = await domainrStatus(candidates)
 
-    // Enrich with optional price from GoDaddy and simple mock metrics
     const results = await Promise.all(
       statuses.map(async (s) => {
         const price = await godaddyPriceQuote(s.domain).catch(() => null)
@@ -83,8 +80,8 @@ export async function GET(req: Request) {
     )
 
     return NextResponse.json({ results: filtered, source: "domainr+godaddy" }, { headers: CACHE_HEADERS.api })
-  } catch (error) {
-    console.error("Search error:", error)
-    return NextResponse.json({ error: "Search temporarily unavailable" }, { status: 503 })
+  } catch (error: any) {
+    console.error("Unhandled error in /api/search:", error)
+    return NextResponse.json({ error: error.message || "Search temporarily unavailable" }, { status: 500 })
   }
 }
